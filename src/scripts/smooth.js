@@ -1,6 +1,6 @@
 /**
  * Created by William Abboud on 3/26/2016.
- * Description:
+ * Description: Simple ES6 VanillaJS Carousel
  * Features:
  *
  */
