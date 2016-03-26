@@ -12,8 +12,3 @@ let smooth = function smooth() {
 
   return Object.create(api);
 };
-
-let foo = smooth();
-let bar = smooth();
-
-console.log(foo === bar);
