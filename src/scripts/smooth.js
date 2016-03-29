@@ -12,3 +12,5 @@ let smooth = function smooth() {
 
   return Object.create(api);
 };
+
+console.log(`foo`.startsWith('foo'));

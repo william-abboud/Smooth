@@ -1,6 +1,7 @@
 const gulp = require('gulp');
 const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
+const sass = require('gulp-sass');
 const browserSync = require('browser-sync').create();
 
 gulp.task('html', () => {
@@ -21,9 +22,18 @@ gulp.task('js', () => {
     .pipe(browserSync.stream());
 });
 
-gulp.task('watch', ['js'], () => {
+gulp.task('sass', () => {
+  return gulp
+    .src('src/styles/main.scss')
+    .pipe(sass())
+    .pipe(gulp.dest('dist'))
+    .pipe(browserSync.stream());
+});
+
+gulp.task('watch', ['js', 'sass'], () => {
   gulp.watch('src/**/*.js', ['js'], browserSync.reload);
   gulp.watch('src/**/*.html', ['html'], browserSync.reload);
+  gulp.watch('src/**/*.scss', ['sass']);
 });
 
 gulp.task('serve', ['watch'], () => {
