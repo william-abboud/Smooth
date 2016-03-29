@@ -5,12 +5,21 @@
  *
  */
 
-let smooth = function smooth() {
+const smooth = function smooth(selector) {
+  // DOM References
+  let slider = document.querySelector(selector); // TODO: Support for multiple sliders
+  let slides;
+
+  // API
   const api = {
-    smooth: 'criminal'
+    slide(direction) {
+
+    }
   };
 
-  return Object.create(api);
-};
+  if(!slider || !slider.children) {
+    throw new Error('Nothing to slide');
+  }
 
-console.log(`foo`.startsWith('foo'));
+  slides = slider.children;
+};

@@ -1,4 +1,6 @@
 const gulp = require('gulp');
+const postcss = require('gulp-postcss');
+const autoprefixer = require('autoprefixer');
 const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
 const sass = require('gulp-sass');
@@ -24,8 +26,9 @@ gulp.task('js', () => {
 
 gulp.task('sass', () => {
   return gulp
-    .src('src/styles/main.scss')
+    .src('src/styles/smooth.scss')
     .pipe(sass())
+    .pipe(postcss([ autoprefixer({ browsers: ['last 2 versions'] }) ]))
     .pipe(gulp.dest('dist'))
     .pipe(browserSync.stream());
 });

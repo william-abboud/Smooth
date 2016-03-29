@@ -1,0 +1,51 @@
+* {
+  box-sizing: border-box;
+}
+
+// TODO: Move styles to another stylesheet
+/* Pretty Styles */
+
+body {
+  background: linear-gradient(to bottom, #3d72b4, #525252) no-repeat;
+  min-height: 100vh;
+}
+
+.smooth-slider {
+  border: 1px solid;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #212121;
+}
+
+.slide {
+  text-align: center;
+  font-size: 2rem;
+  background: darkorange;
+}
+
+/* /Pretty styles */
+
+[class*="smooth-slider"][data-orientation*="horizontal"] {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+[class*="smooth-slider"][data-orientation*="vertical"] {
+  display: flex;
+  flex-flow: column nowrap;
+  background: red;
+}
+
+.generated-wrapper {
+  overflow: hidden;
+  width: 300px;
+}
+
+.smooth-slider {
+  width: 300px;
+
+  .slide {
+    max-width: 100%;
+    flex: 1 0 500px;
+  }
+}
+

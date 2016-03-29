@@ -3,10 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Smooth</title>
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="smooth.css">
 </head>
 <body>
-  <p>A Smooth Criminal appears </p>
-<script src="smooth.js"></script>
+  <h2> Example </h2>
+  <!-- TODO: Decide on usage of classes and data attributes for options -->
+  <div class="generated-wrapper">
+    <div id="slider" class="smooth-slider" data-orientation="horizontal">
+      <!-- TODO: Classes on slides are not needed, just for example -->
+
+      <div class="slide">1</div>
+      <div class="slide">2</div>
+      <div class="slide">3</div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="smooth.js"></script>
+  <script>
+    // TODO: Pass in options
+    // TODO: Manual methods calling
+    smooth('#slider');
+  </script>
 </body>
 </html>
