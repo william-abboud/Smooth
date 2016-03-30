@@ -32,7 +32,6 @@ body {
 [class*="smooth-slider"][data-orientation*="vertical"] {
   display: flex;
   flex-flow: column nowrap;
-  background: red;
 }
 
 .generated-wrapper {
@@ -42,10 +41,10 @@ body {
 
 .smooth-slider {
   width: 300px;
+  transition: 0.7s all ease-in; // TODO: Add support for flexible transitions
 
   .slide {
     max-width: 100%;
-    flex: 1 0 500px;
+    flex: 1 0 100%;
   }
 }
-
