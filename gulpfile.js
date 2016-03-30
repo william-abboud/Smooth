@@ -1,9 +1,12 @@
+const fs = require('fs');
 const gulp = require('gulp');
 const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
 const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
 const sass = require('gulp-sass');
+const browserify = require('browserify');
+const babelify = require('babelify');
 const browserSync = require('browser-sync').create();
 
 gulp.task('html', () => {
@@ -13,15 +16,12 @@ gulp.task('html', () => {
 });
 
 gulp.task('js', () => {
-  return gulp
-    .src('src/scripts/**/*.js')
-    .pipe(sourcemaps.init())
-    .pipe(babel({
-      presets: ['es2015']
-    }))
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest('dist'))
-    .pipe(browserSync.stream());
+  browserify('src/scripts/main.js')
+    .transform(babelify, {presets: ["es2015"]})
+    .bundle()
+    .pipe(fs.createWriteStream('dist/bundled.js'));
+
+  browserSync.reload();
 });
 
 gulp.task('sass', () => {
