@@ -19,7 +19,7 @@ body {
 .slide {
   text-align: center;
   font-size: 2rem;
-  background: darkorange;
+  background: #ff8c00;
 }
 
 /* /Pretty styles */
@@ -41,10 +41,13 @@ body {
 
 .smooth-slider {
   width: 300px;
-  transition: 0.7s all ease-in; // TODO: Add support for flexible transitions
 
   .slide {
     max-width: 100%;
     flex: 1 0 100%;
+  }
+
+  &.transition {
+    transition: 0.7s all ease-in; // TODO: Add support for flexible transitions
   }
 }

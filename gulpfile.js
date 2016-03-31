@@ -1,4 +1,5 @@
 const fs = require('fs');
+const mkdirp = require('mkdirp');
 const gulp = require('gulp');
 const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
@@ -8,6 +9,10 @@ const sass = require('gulp-sass');
 const browserify = require('browserify');
 const babelify = require('babelify');
 const browserSync = require('browser-sync').create();
+
+gulp.task('dist', () => {
+  mkdirp('./dist');
+});
 
 gulp.task('html', () => {
   return gulp.src('src/**/*.html')
@@ -33,13 +38,13 @@ gulp.task('sass', () => {
     .pipe(browserSync.stream());
 });
 
-gulp.task('watch', ['js', 'sass'], () => {
+gulp.task('watch', ['html', 'js', 'sass'], () => {
   gulp.watch('src/**/*.js', ['js'], browserSync.reload);
   gulp.watch('src/**/*.html', ['html'], browserSync.reload);
   gulp.watch('src/**/*.scss', ['sass']);
 });
 
-gulp.task('serve', ['watch'], () => {
+gulp.task('serve', ['dist', 'watch'], () => {
   browserSync.init({
     server: {
       baseDir: 'dist'
