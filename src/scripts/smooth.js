@@ -5,51 +5,55 @@
  *
  */
 
-// DOM References
-let slider;
-let dimensions;
-let slides;
-
-// Methods
+let slider
+  , dimensions
+  , slides;
 
 // TODO: Add support for vertical, parameter handling, stoping condition
-const _translate = function _translate(direction) {
-  const offset = (direction === 'backwards') ? dimensions.width : (-dimensions.width);
-  let [existingOffset] = /-?\d+/g.exec(slider.style.transform) || [0];
-
-  existingOffset = parseInt(existingOffset);
-
+function _translate(val) {
   slider.classList.add('transition');
-  slider.style.transform = `translateX(${existingOffset + offset}px)`;
+  slider.style.transform = `translateX(${val}px)`;
 };
 
-const _clearTranslate = function _clearTranslate() {
+function _resetTranslate(listenerFn) {
+  slider.removeEventListener('transitionend', listenerFn);
   slider.classList.remove('transition');
-  slider.style.transform = '';
+  slider.style.transform = 'translateX(-300px)';
 };
 
-const _setCurrent = function _setCurrent(el) {
+function _swapCurrentTag(el) {
+  const currentSlide = slider.querySelector('[data-current="true"]');
+
   el.dataset.current = "true";
-};
-
-const _removeCurrent = function _removeCurrent(el) {
-  delete el.dataset.current;
+  delete currentSlide.dataset.current;
 }
 
-const _pop = function _pop(el) {
-  slider.removeChild(el);
-}
-
-const _push = function _push(el) {
+function _push(el) {
   slider.appendChild(el);
 }
 
-const slideForward = function slideForward() {
-  _translate('forward');
+function slideForward() {
+  _translate(-600);
+
+  slider.addEventListener('transitionend', function translateEnd() {
+    _swapCurrentTag(slides.item(2));
+    _push(slider.removeChild(slides.item(1)));
+    _resetTranslate(translateEnd);
+  });
 };
 
-const slideBackwards = function slideBackwards() {
-  _translate('backwards');
+function slideBackwards() {
+  const lastEl = slider.removeChild(slider.lastElementChild);
+  const pocket = slider.replaceChild(lastEl, slider.firstElementChild);
+
+  _translate(0);
+
+  slider.addEventListener('transitionend', function translateEnd() {
+    _swapCurrentTag(lastEl);
+    _resetTranslate(translateEnd);
+
+    slider.insertBefore(pocket, lastEl);
+  });
 };
 
 const api = {
@@ -57,34 +61,17 @@ const api = {
   slideBackwards
 };
 
-const _arrangeSlides = function _arrangeSlides(el) {
-  _removeCurrent(el);
-  _setCurrent(el.nextElementSibling);
-  _pop(el);
-  _push(el);
-  _clearTranslate();
-};
-
-const _addEvents = function _addEvents() {
-  slider.addEventListener('transitionend', () => {
-    let old = slider.querySelector('[data-current="true"]');
-
-    _arrangeSlides(old);
-  });
-};
-
-const init = function init(selector) {
+function init(selector) {
   slider = document.querySelector(selector);
 
-  if (!slider || !slider.children) {
+  if (!slider || !slider.children.length) {
     throw new Error('Nothing to slide');
   }
 
   dimensions = slider.getBoundingClientRect();
   slides = slider.children;
 
-  _setCurrent(slides[0]);
-  _addEvents();
+  slides[1].dataset.current = 'true';
   return api;
 };
 
