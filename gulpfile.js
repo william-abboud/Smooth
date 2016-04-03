@@ -10,6 +10,10 @@ const browserify = require('browserify');
 const babelify = require('babelify');
 const browserSync = require('browser-sync').create();
 
+gulp.task('images', ['dist'], () => {
+  return gulp.src('src/imgs/**/*.jpeg').pipe(gulp.dest('dist/imgs'));
+});
+
 gulp.task('dist', () => {
   mkdirp('./dist');
 });
@@ -38,7 +42,7 @@ gulp.task('sass', () => {
     .pipe(browserSync.stream());
 });
 
-gulp.task('watch', ['html', 'js', 'sass'], () => {
+gulp.task('watch', ['html', 'js', 'sass', 'images'], () => {
   gulp.watch('src/**/*.js', ['js'], browserSync.reload);
   gulp.watch('src/**/*.html', ['html'], browserSync.reload);
   gulp.watch('src/**/*.scss', ['sass']);
