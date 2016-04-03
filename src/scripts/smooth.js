@@ -7,18 +7,19 @@
 
 let slider
   , dimensions
-  , slides;
+  , slides
+  , opts;
 
 // TODO: Add support for vertical, parameter handling, stoping condition
 function _translate(val) {
   slider.classList.add('transition');
-  slider.style.transform = `translateX(${val}px)`;
+  slider.style.transform = `translateX(${val})`;
 };
 
 function _resetTranslate(listenerFn) {
   slider.removeEventListener('transitionend', listenerFn);
   slider.classList.remove('transition');
-  slider.style.transform = 'translateX(-300px)';
+  slider.style.transform = `translateX(-${opts.width})`;
 };
 
 function _swapCurrentTag(el) {
@@ -33,7 +34,11 @@ function _push(el) {
 }
 
 function slideForward() {
-  _translate(-600);
+  let split = opts.width.split(/^(\d+(?:\.\d+)?)(.*)$/);
+  let value = parseInt(split[1]);
+  let unit = split[2];
+
+  _translate(`-${value * 2}${unit}`);
 
   slider.addEventListener('transitionend', function translateEnd() {
     _swapCurrentTag(slides.item(2));
@@ -61,8 +66,9 @@ const api = {
   slideBackwards
 };
 
-function init(selector) {
+function init(selector, options) {
   slider = document.querySelector(selector);
+  opts = options;
 
   if (!slider || !slider.children.length) {
     throw new Error('Nothing to slide');
