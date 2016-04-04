@@ -6,9 +6,12 @@
  */
 
 let slider
-  , dimensions
   , slides
   , opts;
+
+const defaultOptions = {
+
+};
 
 // TODO: Add support for vertical, parameter handling, stoping condition
 function _translate(val) {
@@ -67,14 +70,22 @@ const api = {
 };
 
 function init(selector, options) {
+  const wrapper = document.createElement('div');
+  const pocketSlide = document.createElement('div');
+  wrapper.classList.add('generated-wrapper');
+  pocketSlide.classList.add('slide');
+
   slider = document.querySelector(selector);
-  opts = options;
+  opts = options || defaultOptions;
 
   if (!slider || !slider.children.length) {
     throw new Error('Nothing to slide');
   }
 
-  dimensions = slider.getBoundingClientRect();
+  slider.insertBefore(pocketSlide, slider.children[0]);
+  slider.parentNode.appendChild(wrapper);
+  wrapper.appendChild(slider.parentNode.removeChild(slider));
+
   slides = slider.children;
 
   slides[1].dataset.current = 'true';
