@@ -1,0 +1,19 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(to bottom, #3d72b4, #525252) no-repeat;
+  min-height: 100vh;
+}
+
+.smooth-slider {
+  border-radius: 5px;
+  box-shadow: 0 0 5px #212121;
+}
+
+.slide {
+  text-align: center;
+  font-size: 2rem;
+  background: #ff8c00;
+}

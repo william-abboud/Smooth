@@ -35,7 +35,7 @@ gulp.task('js', () => {
 
 gulp.task('sass', () => {
   return gulp
-    .src('src/styles/smooth.scss')
+    .src('src/styles/main.scss')
     .pipe(sass())
     .pipe(postcss([ autoprefixer({ browsers: ['last 2 versions'] }) ]))
     .pipe(gulp.dest('dist'))
