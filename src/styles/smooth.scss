@@ -4,13 +4,14 @@
 }
 
 .generated-wrapper {
-  width: $smooth-slider-width;
-  height: $smooth-slider-height;
+  width: 100%;
+  height: auto;
   overflow: hidden;
+  max-width: 700px;
 }
 
 .smooth-slider {
-  transform: translateX(-$smooth-slider-width);
+  transform: translateX(-100%);
 
   &.transition {
    transition: $smooth-slider-transition;

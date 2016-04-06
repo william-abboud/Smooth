@@ -1,5 +1,3 @@
 import smooth from './smooth';
 
-window.smoothSlider = smooth('#slider', {
-  width: '100%'
-});
+window.smoothSlider = smooth('#slider');
