@@ -11,6 +11,60 @@ let slider
 
 const defaultOptions = {};
 
+function _generateWrapper() {
+  const wrapper = document.createElement('div');
+  const pocketSlide = document.createElement('div');
+
+  wrapper.classList.add('generated-wrapper');
+  pocketSlide.classList.add('slide');
+  slider.insertBefore(pocketSlide, slider.children[0]);
+  slider.parentNode.appendChild(wrapper);
+  wrapper.appendChild(slider.parentNode.removeChild(slider));
+}
+
+function _generateSlides() {
+  const wrapImage = (img) => {
+    let justBefore;
+    let parent = img.parentElement;
+    const wrapperSlide = document.createElement('div');
+    wrapperSlide.classList.add('slide');
+
+    if (parent === slider) {
+      wrapperSlide.appendChild(img.cloneNode());
+      return wrapperSlide;
+    }
+
+    while (parent !== slider) {
+      justBefore = parent;
+      parent = parent.parentElement;
+    }
+
+    justBefore.classList.add('content');
+    wrapperSlide.appendChild(img.parentElement.removeChild(img));
+    wrapperSlide.appendChild(justBefore.cloneNode(true));
+
+    return wrapperSlide;
+  };
+
+  for (const child of [...slider.children]) {
+    if (child.tagName.toLowerCase() === 'img') {
+      slider.replaceChild(wrapImage(child), child);
+    } else {
+      const imgs = child.getElementsByTagName('img');
+
+      if (imgs.length) {
+        slider.replaceChild(wrapImage(imgs[0]), child);
+      } else {
+        child.classList.add('slide');
+      }
+    }
+  }
+}
+
+function _prepareAdditionalContent() {
+
+}
+
 // TODO: Add support for vertical, parameter handling, stoping condition
 function _translate(val) {
   slider.classList.add('transition');
@@ -35,11 +89,6 @@ function _push(el) {
 }
 
 function slideForward() {
-  // let split = opts.width.split(/^(\d+(?:\.\d+)?)(.*)$/);
-  // let value = parseInt(split[1]);
-  // let unit = split[2];
-
-  // _translate(`-${value * 2}${unit}`);
   _translate('-200%');
 
   slider.addEventListener('transitionend', function translateEnd() {
@@ -69,10 +118,7 @@ const api = {
 };
 
 function init(selector, options) {
-  const wrapper = document.createElement('div');
-  const pocketSlide = document.createElement('div');
-  wrapper.classList.add('generated-wrapper');
-  pocketSlide.classList.add('slide');
+  let images;
 
   slider = document.querySelector(selector);
 
@@ -80,9 +126,8 @@ function init(selector, options) {
     throw new Error('Nothing to slide');
   }
 
-  slider.insertBefore(pocketSlide, slider.children[0]);
-  slider.parentNode.appendChild(wrapper);
-  wrapper.appendChild(slider.parentNode.removeChild(slider));
+  _generateWrapper();
+  _generateSlides();
 
   slides = slider.children;
   slides[1].dataset.current = 'true';

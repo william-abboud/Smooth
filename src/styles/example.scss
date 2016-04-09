@@ -11,6 +11,7 @@ body {
   text-align: center;
   text-shadow: 0 1px 0 #000;
   color: white;
+  flex: 1 0 100%;
 }
 
 .smooth-slider {
@@ -22,4 +23,10 @@ body {
   text-align: center;
   font-size: 2rem;
   background: #ff8c00;
+}
+
+main {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
 }
