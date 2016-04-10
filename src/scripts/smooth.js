@@ -7,7 +7,9 @@
 
 let slider
   , slides
-  , opts;
+  , opts
+  , dataOpts
+  , timeoutID;
 
 const defaultOptions = {};
 
@@ -61,8 +63,8 @@ function _generateSlides() {
   }
 }
 
-function _prepareAdditionalContent() {
-
+function _timeout() {
+  slideForward();
 }
 
 // TODO: Add support for vertical, parameter handling, stoping condition
@@ -95,6 +97,11 @@ function slideForward() {
     _swapCurrentTag(slides.item(2));
     _push(slider.removeChild(slides.item(1)));
     _resetTranslate(translateEnd);
+
+    if (timeoutID) {
+      clearTimeout(timeoutID);
+      timeoutID = setTimeout(_timeout, dataOpts.timeout);
+    }
   });
 };
 
@@ -118,20 +125,24 @@ const api = {
 };
 
 function init(selector, options) {
-  let images;
-
   slider = document.querySelector(selector);
 
   if (!slider || !slider.children.length) {
     throw new Error('Nothing to slide');
+  } else {
+    dataOpts = slider.dataset;
+    slides = slider.children;
+    slides[1].dataset.current = 'true';
+
+    _generateWrapper();
+    _generateSlides();
+
+    if (!isNaN(Number(dataOpts.timeout))) {
+      timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
+    }
+
+    return api;
   }
-
-  _generateWrapper();
-  _generateSlides();
-
-  slides = slider.children;
-  slides[1].dataset.current = 'true';
-  return api;
 };
 
 export default init;
