@@ -8,6 +8,31 @@
   height: auto;
   overflow: hidden;
   max-width: 700px;
+  max-height: $smooth-slider-height;
+  position: relative;
+
+  .nav-controls-wrapper {
+    font-size: 2rem;
+    color: #fff;
+
+    .nav-control--left {
+      margin-left: 1rem;
+      left: 0;
+    }
+
+    .nav-control--right {
+      margin-right: 1rem;
+      right: 0;
+    }
+
+    .nav-control--left,
+    .nav-control--right {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      bottom: 0;
+    }
+  }
 }
 
 .smooth-slider {
@@ -20,13 +45,13 @@
   .slide {
     position: relative;
     flex: 1 0 100%;
-    height: 100%;
   }
 
   img {
     width: 100%;
     max-width: 100%;
-    height: auto;
+    height: $smooth-slider-height;
+    max-height: 100%;
   }
 
   .content {

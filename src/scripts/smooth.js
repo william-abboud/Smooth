@@ -63,6 +63,31 @@ function _generateSlides() {
   }
 }
 
+function _generateNavControls() {
+  const navControlLeft = document.createElement('span');
+  const navControlRight = navControlLeft.cloneNode();
+  const navControlsWrapper = document.createElement('div');
+
+  navControlsWrapper.classList.add('nav-controls-wrapper');
+  navControlLeft.classList.add('nav-control--left');
+  navControlRight.classList.add('nav-control--right');
+  navControlLeft.innerHTML = '<';
+  navControlRight.innerHTML = '>';
+
+  navControlLeft.addEventListener('click', () => {
+    slideBackwards();
+  });
+
+  navControlRight.addEventListener('click', () => {
+    slideForward();
+  });
+
+  navControlsWrapper.appendChild(navControlLeft);
+  navControlsWrapper.appendChild(navControlRight);
+
+  return navControlsWrapper;
+}
+
 function _timeout() {
   slideForward();
 }
@@ -139,6 +164,10 @@ function init(selector, options) {
 
     if (!isNaN(Number(dataOpts.timeout))) {
       timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
+    }
+
+    if (dataOpts.navControls === 'true') {
+      slider.parentElement.appendChild(_generateNavControls());
     }
 
     return api;
