@@ -12,25 +12,37 @@ let slider
   , timeoutID
   , hasManuallySlided = false;
 
-const defaultOptions = {};
-
 function _generateWrapper() {
   const wrapper = document.createElement('div');
-  const pocketSlide = document.createElement('div');
 
   wrapper.classList.add('smooth-slider__wrapper');
-  pocketSlide.classList.add('slide');
-  slider.insertBefore(pocketSlide, slider.children[0]);
-  slider.parentNode.appendChild(wrapper);
-  wrapper.appendChild(slider.parentNode.removeChild(slider));
+
+  return wrapper;
 }
 
-function _navControlLeftClick() {
+function _wrapSlider(wrapperEl) {
+  slider.parentElement.appendChild(wrapperEl);
+  wrapperEl.appendChild(slider.parentElement.removeChild(slider));
+}
+
+function _generatePocketSlide() {
+  const pocketSlide = document.createElement('div');
+
+  pocketSlide.classList.add('slide');
+
+  return pocketSlide;
+}
+
+function _insertPocketSlide(pocketSlide) {
+  slider.insertBefore(pocketSlide, slides[0]);
+}
+
+function _onNavControlLeftClick() {
   hasManuallySlided = true;
   slideBackwards();
 }
 
-function _navControlRightClick() {
+function _onNavControlRightClick() {
   hasManuallySlided = true;
   slideForward();
 }
@@ -85,8 +97,8 @@ function _generateNavControls() {
   navControlLeft.innerHTML = '<';
   navControlRight.innerHTML = '>';
 
-  navControlLeft.addEventListener('click', _navControlLeftClick);
-  navControlRight.addEventListener('click', _navControlRightClick);
+  navControlLeft.addEventListener('click', _onNavControlLeftClick);
+  navControlRight.addEventListener('click', _onNavControlRightClick);
 
   navControlsWrapper.appendChild(navControlLeft);
   navControlsWrapper.appendChild(navControlRight);
@@ -122,7 +134,7 @@ function _push(el) {
 }
 
 function slideForward() {
-  document.querySelector('.nav-control--right').removeEventListener('click', _navControlRightClick);
+  document.querySelector('.nav-control--right').removeEventListener('click', _onNavControlRightClick);
   _translate('-200%');
 
   if (hasManuallySlided) {
@@ -136,7 +148,7 @@ function slideForward() {
     _push(slider.removeChild(slides.item(1)));
     _resetTranslate(translateEnd);
 
-    document.querySelector('.nav-control--right').addEventListener('click', _navControlRightClick);
+    document.querySelector('.nav-control--right').addEventListener('click', _onNavControlRightClick);
     if (hasManuallySlided) {
       timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
       hasManuallySlided = false;
@@ -148,7 +160,7 @@ function slideBackwards() {
   const lastEl = slider.removeChild(slider.lastElementChild);
   const pocket = slider.replaceChild(lastEl, slider.firstElementChild);
 
-  document.querySelector('.nav-control--left').removeEventListener('click', _navControlLeftClick);
+  document.querySelector('.nav-control--left').removeEventListener('click', _onNavControlLeftClick);
 
   if (hasManuallySlided) {
     clearTimeout(timeoutID);
@@ -162,7 +174,7 @@ function slideBackwards() {
     _resetTranslate(translateEnd);
     slider.insertBefore(pocket, lastEl);
 
-    document.querySelector('.nav-control--left').addEventListener('click', _navControlLeftClick);
+    document.querySelector('.nav-control--left').addEventListener('click', _onNavControlLeftClick);
 
     if (hasManuallySlided) {
       timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
@@ -186,7 +198,8 @@ function init(selector, options) {
     slides = slider.children;
     slides[1].dataset.current = 'true';
 
-    _generateWrapper();
+    _wrapSlider(_generateWrapper());
+    _insertPocketSlide(_generatePocketSlide());
     _generateSlides();
 
     if (!isNaN(Number(dataOpts.timeout))) {
