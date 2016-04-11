@@ -2,11 +2,20 @@
   SmoothJS is a very light ES6 Vanilla JavaScript + SCSS written Carousel
 
 # Installation
+  Clone this repo with the following command in Git Bash or a CLI of your choosing:
 
-  ## Prerequisites
-  You must have Node.js 5.5 or later installed.
+  ``` git clone https://github.com/william-abboud/Smooth.git ```
 
-  You also need to have Gulp installed globally.
+## Prerequisites
+  You must have `Node.js 5.5` or later installed.
+
+  If you don't have `NodeJS` installed on your machine head over to:
+  https://nodejs.org/en/download/ and download the latest version.
+
+  You also need to have `Gulp` installed globally. To do that you need to have `Node`
+  installed already and install `Gulp` via `NPM` in a CLI of your choosing:
+
+  ``` npm install -g Gulp ```
 
   If you have installed the prerequisites run the following command in a CLI of your choosing:
 
