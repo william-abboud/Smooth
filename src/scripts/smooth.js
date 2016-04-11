@@ -9,7 +9,8 @@ let slider
   , slides
   , opts
   , dataOpts
-  , timeoutID;
+  , timeoutID
+  , hasManuallySlided = false;
 
 const defaultOptions = {};
 
@@ -75,10 +76,12 @@ function _generateNavControls() {
   navControlRight.innerHTML = '>';
 
   navControlLeft.addEventListener('click', () => {
+    hasManuallySlided = true;
     slideBackwards();
   });
 
   navControlRight.addEventListener('click', () => {
+    hasManuallySlided = true;
     slideForward();
   });
 
@@ -118,14 +121,20 @@ function _push(el) {
 function slideForward() {
   _translate('-200%');
 
+  if (hasManuallySlided) {
+    clearTimeout(timeoutID);
+  } else {
+    timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
+  }
+
   slider.addEventListener('transitionend', function translateEnd() {
     _swapCurrentTag(slides.item(2));
     _push(slider.removeChild(slides.item(1)));
     _resetTranslate(translateEnd);
 
-    if (timeoutID) {
-      clearTimeout(timeoutID);
-      timeoutID = setTimeout(_timeout, dataOpts.timeout);
+    if (hasManuallySlided) {
+      timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
+      hasManuallySlided = false;
     }
   });
 };
@@ -134,13 +143,22 @@ function slideBackwards() {
   const lastEl = slider.removeChild(slider.lastElementChild);
   const pocket = slider.replaceChild(lastEl, slider.firstElementChild);
 
-  _translate(0);
+  if (hasManuallySlided) {
+    clearTimeout(timeoutID);
+  } else {
+    timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
+  }
 
+  _translate(0);
   slider.addEventListener('transitionend', function translateEnd() {
     _swapCurrentTag(lastEl);
     _resetTranslate(translateEnd);
-
     slider.insertBefore(pocket, lastEl);
+
+    if (hasManuallySlided) {
+      timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
+      hasManuallySlided = false;
+    }
   });
 };
 
