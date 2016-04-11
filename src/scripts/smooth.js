@@ -197,7 +197,9 @@ function init(selector, options) {
       slider.parentElement.appendChild(_generateNavControls());
     }
 
-    slider.parentElement.classList.add(...[...slider.classList].splice(1));
+    const classes = [...[...slider.classList].splice(0)];
+    slider.classList.remove(...classes);
+    slider.parentElement.classList.add(...classes);
     slider.classList.add('smooth-slider');
 
     return api;
