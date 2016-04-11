@@ -1,6 +1,8 @@
 # SmoothJS
   SmoothJS is a very light ES6 Vanilla JavaScript + SCSS written Carousel
 
+## Features
+
 # Installation
   Clone this repo with the following command in Git Bash or a CLI of your choosing:
 
