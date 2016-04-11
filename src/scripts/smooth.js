@@ -18,7 +18,7 @@ function _generateWrapper() {
   const wrapper = document.createElement('div');
   const pocketSlide = document.createElement('div');
 
-  wrapper.classList.add('generated-wrapper');
+  wrapper.classList.add('smooth-slider__wrapper');
   pocketSlide.classList.add('slide');
   slider.insertBefore(pocketSlide, slider.children[0]);
   slider.parentNode.appendChild(wrapper);
