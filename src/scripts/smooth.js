@@ -25,6 +25,16 @@ function _generateWrapper() {
   wrapper.appendChild(slider.parentNode.removeChild(slider));
 }
 
+function _navControlLeftClick() {
+  hasManuallySlided = true;
+  slideBackwards();
+}
+
+function _navControlRightClick() {
+  hasManuallySlided = true;
+  slideForward();
+}
+
 function _generateSlides() {
   const wrapImage = (img) => {
     let justBefore;
@@ -75,15 +85,8 @@ function _generateNavControls() {
   navControlLeft.innerHTML = '<';
   navControlRight.innerHTML = '>';
 
-  navControlLeft.addEventListener('click', () => {
-    hasManuallySlided = true;
-    slideBackwards();
-  });
-
-  navControlRight.addEventListener('click', () => {
-    hasManuallySlided = true;
-    slideForward();
-  });
+  navControlLeft.addEventListener('click', _navControlLeftClick);
+  navControlRight.addEventListener('click', _navControlRightClick);
 
   navControlsWrapper.appendChild(navControlLeft);
   navControlsWrapper.appendChild(navControlRight);
@@ -119,6 +122,7 @@ function _push(el) {
 }
 
 function slideForward() {
+  document.querySelector('.nav-control--right').removeEventListener('click', _navControlRightClick);
   _translate('-200%');
 
   if (hasManuallySlided) {
@@ -132,6 +136,7 @@ function slideForward() {
     _push(slider.removeChild(slides.item(1)));
     _resetTranslate(translateEnd);
 
+    document.querySelector('.nav-control--right').addEventListener('click', _navControlRightClick);
     if (hasManuallySlided) {
       timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
       hasManuallySlided = false;
@@ -142,6 +147,8 @@ function slideForward() {
 function slideBackwards() {
   const lastEl = slider.removeChild(slider.lastElementChild);
   const pocket = slider.replaceChild(lastEl, slider.firstElementChild);
+
+  document.querySelector('.nav-control--left').removeEventListener('click', _navControlLeftClick);
 
   if (hasManuallySlided) {
     clearTimeout(timeoutID);
@@ -154,6 +161,8 @@ function slideBackwards() {
     _swapCurrentTag(lastEl);
     _resetTranslate(translateEnd);
     slider.insertBefore(pocket, lastEl);
+
+    document.querySelector('.nav-control--left').addEventListener('click', _navControlLeftClick);
 
     if (hasManuallySlided) {
       timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
@@ -187,6 +196,9 @@ function init(selector, options) {
     if (dataOpts.navControls === 'true') {
       slider.parentElement.appendChild(_generateNavControls());
     }
+
+    slider.parentElement.classList.add(...[...slider.classList].splice(1));
+    slider.classList.add('smooth-slider');
 
     return api;
   }
