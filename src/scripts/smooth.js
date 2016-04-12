@@ -120,11 +120,11 @@ function _disableManualSliding() {
 }
 
 function slideForward() {
+  clearTimeout(timeoutID);
   _translate('-200%');
 
   if (hasManuallySlided) {
     _disableManualSliding();
-    clearTimeout(timeoutID);
   }
 
   slider.addEventListener('transitionend', function translateEnd() {
@@ -145,9 +145,10 @@ function slideBackwards() {
   const lastEl = slider.removeChild(slider.lastElementChild);
   const pocket = slider.replaceChild(lastEl, slider.firstElementChild);
 
+  clearTimeout(timeoutID);
+  
   if (hasManuallySlided) {
     _disableManualSliding();
-    clearTimeout(timeoutID);
   }
 
   _translate(0);
