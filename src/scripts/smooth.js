@@ -1,8 +1,6 @@
 /**
  * Created by William Abboud on 3/26/2016.
- * Description: Simple ES6 VanillaJS Carousel
- * Features:  TODO: Add support for multiple sliders
- *
+ * Description: Simple ES6 Vanilla JavaScript Carousel
  */
 
 let slider
@@ -10,6 +8,8 @@ let slider
   , opts
   , dataOpts
   , timeoutID
+  , navControlLeft
+  , navControlRight
   , hasManuallySlided = false;
 
 function _generateWrapper() {
@@ -25,12 +25,12 @@ function _wrapSlider(wrapperEl) {
   wrapperEl.appendChild(slider.parentElement.removeChild(slider));
 }
 
-function _generatePocketSlide() {
-  const pocketSlide = document.createElement('div');
+function _generateSlide() {
+  const newSlide = document.createElement('div');
 
-  pocketSlide.classList.add('slide');
+  newSlide.classList.add('slide');
 
-  return pocketSlide;
+  return newSlide;
 }
 
 function _insertPocketSlide(pocketSlide) {
@@ -47,38 +47,44 @@ function _onNavControlRightClick() {
   slideForward();
 }
 
-function _generateSlides() {
-  const wrapImage = (img) => {
-    let justBefore;
-    let parent = img.parentElement;
-    const wrapperSlide = document.createElement('div');
-    wrapperSlide.classList.add('slide');
+function _addManualSliding() {
+  navControlRight.addEventListener('click', _onNavControlRightClick);
+  navControlLeft.addEventListener('click', _onNavControlLeftClick);
+}
 
-    if (parent === slider) {
-      wrapperSlide.appendChild(img.cloneNode());
-      return wrapperSlide;
-    }
+function _wrapImage (img) {
+  let justBefore;
+  let imageContainer = img.parentElement;
+  const imageWrapper = _generateSlide();
 
-    while (parent !== slider) {
-      justBefore = parent;
-      parent = parent.parentElement;
+  if (imageContainer === slider) {
+    imageWrapper.appendChild(img.cloneNode());
+
+    return imageWrapper;
+  } else {
+    // Find top level parent containing the image
+    while (imageContainer !== slider) {
+      justBefore = imageContainer;
+      imageContainer = imageContainer.parentElement;
     }
 
     justBefore.classList.add('content');
-    wrapperSlide.appendChild(img.parentElement.removeChild(img));
-    wrapperSlide.appendChild(justBefore.cloneNode(true));
+    imageWrapper.appendChild(img.parentElement.removeChild(img));
+    imageWrapper.appendChild(justBefore.cloneNode(true));
 
-    return wrapperSlide;
-  };
+    return imageWrapper;
+  }
+}
 
-  for (const child of [...slider.children]) {
+function _generateSlides() {
+  for (const child of [...slides]) {
     if (child.tagName.toLowerCase() === 'img') {
-      slider.replaceChild(wrapImage(child), child);
+      slider.replaceChild(_wrapImage(child), child);
     } else {
       const imgs = child.getElementsByTagName('img');
 
       if (imgs.length) {
-        slider.replaceChild(wrapImage(imgs[0]), child);
+        slider.replaceChild(_wrapImage(imgs[0]), child);
       } else {
         child.classList.add('slide');
       }
@@ -87,18 +93,16 @@ function _generateSlides() {
 }
 
 function _generateNavControls() {
-  const navControlLeft = document.createElement('span');
-  const navControlRight = navControlLeft.cloneNode();
   const navControlsWrapper = document.createElement('div');
+
+  navControlLeft = document.createElement('span');
+  navControlRight = navControlLeft.cloneNode();
 
   navControlsWrapper.classList.add('nav-controls-wrapper');
   navControlLeft.classList.add('nav-control--left');
   navControlRight.classList.add('nav-control--right');
-  navControlLeft.innerHTML = '<';
-  navControlRight.innerHTML = '>';
 
-  navControlLeft.addEventListener('click', _onNavControlLeftClick);
-  navControlRight.addEventListener('click', _onNavControlRightClick);
+  _addManualSliding();
 
   navControlsWrapper.appendChild(navControlLeft);
   navControlsWrapper.appendChild(navControlRight);
@@ -106,11 +110,6 @@ function _generateNavControls() {
   return navControlsWrapper;
 }
 
-function _timeout() {
-  slideForward();
-}
-
-// TODO: Add support for vertical, parameter handling, stoping condition
 function _translate(val) {
   slider.classList.add('transition');
   slider.style.transform = `translateX(${val})`;
@@ -129,30 +128,34 @@ function _swapCurrentTag(el) {
   delete currentSlide.dataset.current;
 }
 
-function _push(el) {
-  slider.appendChild(el);
+function _startAutoSliding () {
+  timeoutID = setTimeout(slideForward, Number(dataOpts.timeout));
+}
+
+function _disableManualSliding() {
+  navControlRight.removeEventListener('click', _onNavControlRightClick);
+  navControlLeft.removeEventListener('click', _onNavControlLeftClick);
 }
 
 function slideForward() {
-  document.querySelector('.nav-control--right').removeEventListener('click', _onNavControlRightClick);
   _translate('-200%');
 
   if (hasManuallySlided) {
+    _disableManualSliding();
     clearTimeout(timeoutID);
-  } else {
-    timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
   }
 
   slider.addEventListener('transitionend', function translateEnd() {
-    _swapCurrentTag(slides.item(2));
-    _push(slider.removeChild(slides.item(1)));
     _resetTranslate(translateEnd);
+    _swapCurrentTag(slides[2]);
+    slider.appendChild(slider.removeChild(slides[1]));
 
-    document.querySelector('.nav-control--right').addEventListener('click', _onNavControlRightClick);
     if (hasManuallySlided) {
-      timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
+      _addManualSliding();
       hasManuallySlided = false;
     }
+
+    _startAutoSliding();
   });
 };
 
@@ -160,26 +163,24 @@ function slideBackwards() {
   const lastEl = slider.removeChild(slider.lastElementChild);
   const pocket = slider.replaceChild(lastEl, slider.firstElementChild);
 
-  document.querySelector('.nav-control--left').removeEventListener('click', _onNavControlLeftClick);
-
   if (hasManuallySlided) {
+    _disableManualSliding();
     clearTimeout(timeoutID);
-  } else {
-    timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
   }
 
   _translate(0);
+
   slider.addEventListener('transitionend', function translateEnd() {
     _swapCurrentTag(lastEl);
     _resetTranslate(translateEnd);
     slider.insertBefore(pocket, lastEl);
 
-    document.querySelector('.nav-control--left').addEventListener('click', _onNavControlLeftClick);
-
     if (hasManuallySlided) {
-      timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
+      _addManualSliding();
       hasManuallySlided = false;
     }
+
+    _startAutoSliding();
   });
 };
 
@@ -199,11 +200,11 @@ function init(selector, options) {
     slides[1].dataset.current = 'true';
 
     _wrapSlider(_generateWrapper());
-    _insertPocketSlide(_generatePocketSlide());
+    _insertPocketSlide(_generateSlide());
     _generateSlides();
 
     if (!isNaN(Number(dataOpts.timeout))) {
-      timeoutID = setTimeout(_timeout, Number(dataOpts.timeout));
+      _startAutoSliding();
     }
 
     if (dataOpts.navControls === 'true') {
