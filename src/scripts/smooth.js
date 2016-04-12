@@ -92,24 +92,6 @@ function _generateSlides() {
   }
 }
 
-function _generateNavControls() {
-  const navControlsWrapper = document.createElement('div');
-
-  navControlLeft = document.createElement('span');
-  navControlRight = navControlLeft.cloneNode();
-
-  navControlsWrapper.classList.add('nav-controls-wrapper');
-  navControlLeft.classList.add('nav-control--left');
-  navControlRight.classList.add('nav-control--right');
-
-  _addManualSliding();
-
-  navControlsWrapper.appendChild(navControlLeft);
-  navControlsWrapper.appendChild(navControlRight);
-
-  return navControlsWrapper;
-}
-
 function _translate(val) {
   slider.classList.add('transition');
   slider.style.transform = `translateX(${val})`;
@@ -195,23 +177,31 @@ function init(selector, options) {
   if (!slider || !slider.children.length) {
     throw new Error('Nothing to slide');
   } else {
+    let classes;
     dataOpts = slider.dataset;
     slides = slider.children;
     slides[1].dataset.current = 'true';
 
     _wrapSlider(_generateWrapper());
     _insertPocketSlide(_generateSlide());
-    _generateSlides();
 
     if (!isNaN(Number(dataOpts.timeout))) {
       _startAutoSliding();
     }
 
-    if (dataOpts.navControls === 'true') {
-      slider.parentElement.appendChild(_generateNavControls());
+    if (dataOpts.navControls === "true") {
+      const controlsWrapper = slider.querySelector('.nav-controls-wrapper');
+
+      navControlLeft = slider.querySelector('.nav-control--left');
+      navControlRight = slider.querySelector('.nav-control--right');
+
+      _addManualSliding();
+      slider.parentElement.appendChild(slider.removeChild(controlsWrapper));
     }
 
-    const classes = [...[...slider.classList].splice(0)];
+    _generateSlides();
+
+    classes = [...[...slider.classList].splice(0)];
     slider.classList.remove(...classes);
     slider.parentElement.classList.add(...classes);
     slider.classList.add('smooth-slider');
