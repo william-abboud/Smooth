@@ -34,25 +34,30 @@
   overflow: hidden;
   position: relative;
 
+
   .nav-controls-wrapper {
-    font-size: 2rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
 
     .nav-control--left {
       margin-left: 1rem;
-      left: 0;
     }
 
     .nav-control--right {
       margin-right: 1rem;
-      right: 0;
     }
 
     .nav-control--left,
     .nav-control--right {
       cursor: pointer;
-      position: absolute;
-      top: 50%;
-      bottom: 50%;
+      z-index: 1;
     }
   }
 }

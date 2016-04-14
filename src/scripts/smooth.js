@@ -9,14 +9,12 @@ let slider
   , dataOpts
   , timeoutID
   , navControlLeft
-  , navControlRight
-  , hasManuallySlided = false;
+  , navControlRight;
 
 function _generateWrapper() {
   const wrapper = document.createElement('div');
 
   wrapper.classList.add('smooth-slider__wrapper');
-
   return wrapper;
 }
 
@@ -29,7 +27,6 @@ function _generateSlide() {
   const newSlide = document.createElement('div');
 
   newSlide.classList.add('slide');
-
   return newSlide;
 }
 
@@ -38,12 +35,10 @@ function _insertPocketSlide(pocketSlide) {
 }
 
 function _onNavControlLeftClick() {
-  hasManuallySlided = true;
   slideBackwards();
 }
 
 function _onNavControlRightClick() {
-  hasManuallySlided = true;
   slideForward();
 }
 
@@ -119,26 +114,20 @@ function _disableManualSliding() {
   navControlLeft.removeEventListener('click', _onNavControlLeftClick);
 }
 
+function _onSlideForwardEnd() {
+  _resetTranslate(_onSlideForwardEnd);
+  _swapCurrentTag(slides[2]);
+  slider.appendChild(slider.removeChild(slides[1]));
+  _addManualSliding();
+  _startAutoSliding();
+}
+
 function slideForward() {
+  _disableManualSliding();
   clearTimeout(timeoutID);
   _translate('-200%');
 
-  if (hasManuallySlided) {
-    _disableManualSliding();
-  }
-
-  slider.addEventListener('transitionend', function translateEnd() {
-    _resetTranslate(translateEnd);
-    _swapCurrentTag(slides[2]);
-    slider.appendChild(slider.removeChild(slides[1]));
-
-    if (hasManuallySlided) {
-      _addManualSliding();
-      hasManuallySlided = false;
-    }
-
-    _startAutoSliding();
-  });
+  slider.addEventListener('transitionend', _onSlideForwardEnd);
 };
 
 function slideBackwards() {
@@ -146,23 +135,14 @@ function slideBackwards() {
   const pocket = slider.replaceChild(lastEl, slider.firstElementChild);
 
   clearTimeout(timeoutID);
-  
-  if (hasManuallySlided) {
-    _disableManualSliding();
-  }
-
+  _disableManualSliding();
   _translate(0);
 
   slider.addEventListener('transitionend', function translateEnd() {
     _swapCurrentTag(lastEl);
     _resetTranslate(translateEnd);
     slider.insertBefore(pocket, lastEl);
-
-    if (hasManuallySlided) {
-      _addManualSliding();
-      hasManuallySlided = false;
-    }
-
+    _addManualSliding();
     _startAutoSliding();
   });
 };

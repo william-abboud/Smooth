@@ -25,17 +25,18 @@ body {
   background: #ff8c00;
 }
 
-.nav-control--left {
-  border: 2px solid red;
-}
-
-.nav-control--right {
-  border: 2px solid blue;
-}
-
 main {
   display: flex;
   flex-flow: column wrap;
   justify-content: center;
   align-items: center;
+  max-width: 50rem;
+  margin: auto;
+}
+
+
+.nav-control--left {
+}
+
+.nav-control--right {
 }
